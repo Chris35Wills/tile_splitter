@@ -1,4 +1,4 @@
-a# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Mon Feb 12 16:30:30 2018
 
@@ -238,7 +238,7 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
         
         #dd=georaster.SingleBandRaster(file_name, load_data=False, latlon=True)    
         dd_tile=georaster.SingleBandRaster(file_name,load_data=tile_xy_dims, latlon=False)
-        ofile="%s/tile_%i.tif" %(out_path, count)b
+        ofile="%s/tile_%i.tif" %(out_path, count)
         dd_tile.save_geotiff(ofile)
 
 
@@ -270,44 +270,45 @@ def plot_it():
 
     ax.plot(tiles_x[0], tiles_y[0])
     ax.plot(tiles_x[1], tiles_y[1])
-    ax.plot(tiles_x[2], tiles_y[2])
-    ax.plot(tiles_x[3], tiles_y[3])
-    ax.plot(tiles_x[4], tiles_y[4])
-    ax.plot(tiles_x[5], tiles_y[5])
-    ax.plot(tiles_x[6], tiles_y[6])
-    ax.plot(tiles_x[7], tiles_y[7])
-    ax.plot(tiles_x[8], tiles_y[8])
-    ax.plot(tiles_x[9], tiles_y[9])
-    ax.plot(tiles_x[10], tiles_y[10])
+    #ax.plot(tiles_x[2], tiles_y[2])
+    #ax.plot(tiles_x[3], tiles_y[3])
+    #ax.plot(tiles_x[4], tiles_y[4])
+    #ax.plot(tiles_x[5], tiles_y[5])
+    #ax.plot(tiles_x[6], tiles_y[6])
+    #ax.plot(tiles_x[7], tiles_y[7])
+    #ax.plot(tiles_x[8], tiles_y[8])
+    #ax.plot(tiles_x[9], tiles_y[9])
+    #ax.plot(tiles_x[10], tiles_y[10])
 
-    ax.plot(tiles_x[11], tiles_y[11])
-    ax.plot(tiles_x[12], tiles_y[12])
-    ax.plot(tiles_x[13], tiles_y[13])
-    ax.plot(tiles_x[14], tiles_y[14])
+    #ax.plot(tiles_x[11], tiles_y[11])
+    #ax.plot(tiles_x[12], tiles_y[12])
+    #ax.plot(tiles_x[13], tiles_y[13])
+    #ax.plot(tiles_x[14], tiles_y[14])
 
-    ax.plot(tiles_x[15], tiles_y[15])
-    ax.plot(tiles_x[16], tiles_y[16])
-    ax.plot(tiles_x[17], tiles_y[17])
-    ax.plot(tiles_x[18], tiles_y[18])
-    ax.plot(tiles_x[19], tiles_y[19])
-    ax.plot(tiles_x[20], tiles_y[20])
-    ax.plot(tiles_x[20], tiles_y[21])
+    #ax.plot(tiles_x[15], tiles_y[15])
+    #ax.plot(tiles_x[16], tiles_y[16])
+    #ax.plot(tiles_x[17], tiles_y[17])
+    #ax.plot(tiles_x[18], tiles_y[18])
+    #ax.plot(tiles_x[19], tiles_y[19])
+    #ax.plot(tiles_x[20], tiles_y[20])
+    #ax.plot(tiles_x[20], tiles_y[21])
 
-    ax.plot(tiles_x[110], tiles_y[110])
-    ax.plot(tiles_x[111], tiles_y[111])
-    ax.plot(tiles_x[112], tiles_y[112])
-    ax.plot(tiles_x[113], tiles_y[113])
-    ax.plot(tiles_x[114], tiles_y[114])
-    ax.plot(tiles_x[115], tiles_y[115])
-    ax.plot(tiles_x[116], tiles_y[116])
-    ax.plot(tiles_x[117], tiles_y[117])
-    ax.plot(tiles_x[118], tiles_y[118])
-    ax.plot(tiles_x[119], tiles_y[119])
-    ax.plot(tiles_x[120], tiles_y[120])
+    #ax.plot(tiles_x[110], tiles_y[110])
+    #ax.plot(tiles_x[111], tiles_y[111])
+    #ax.plot(tiles_x[112], tiles_y[112])
+    #ax.plot(tiles_x[113], tiles_y[113])
+    #ax.plot(tiles_x[114], tiles_y[114])
+    #ax.plot(tiles_x[115], tiles_y[115])
+    #ax.plot(tiles_x[116], tiles_y[116])
+    #ax.plot(tiles_x[117], tiles_y[117])
+    #ax.plot(tiles_x[118], tiles_y[118])
+    #ax.plot(tiles_x[119], tiles_y[119])
+    #ax.plot(tiles_x[120], tiles_y[120])
     #ax.plot(tiles_x[121], tiles_y[121])
 
     ax.axes.set_aspect('equal', 'datalim')
     ax.set_title("Single tile locations")
+    plt.show()
 
 plot_it()
 
