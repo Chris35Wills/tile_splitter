@@ -149,8 +149,11 @@ plt.axes().set_aspect('equal', 'datalim')
 original_tl_moving_window_min_easting_RANGE=np.arange(easting_min,easting_max,tile_dim_m)
 original_tl_moving_window_max_northing_RANGE=np.arange(northing_max,northing_min,tile_dim_m*-1)
 
-tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max,tile_dim_m)
-tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min,tile_dim_m*-1)
+#tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max+tile_dim_m,(tile_dim_m/2))
+#tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min-tile_dim_m,(tile_dim_m/2)*-1)
+tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max+(tile_dim_m/2),(tile_dim_m/2))
+tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min-(tile_dim_m/2),(tile_dim_m/2)*-1)
+
 
 
 easting_step=np.diff(tl_moving_window_min_easting_RANGE, n=2)
@@ -197,6 +200,10 @@ ax.set_title("Tiling scheme")
 ################## If using another convolution layer, make sure the overlaps are big enough to make sure there are no gaps...
 import gdal, ogr, osr, os
 import numpy as np
+
+tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max+(tile_dim_m/2),(tile_dim_m/2))
+tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min-(tile_dim_m/2),(tile_dim_m/2)*-1)
+
 tiles_x=[]
 tiles_y=[]
 
@@ -232,58 +239,48 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
 
 		count+=1
 
-		#<<<<<<<<<<
-		# first cell
-		if (tl_easting_TILE_initial == tl_moving_window_min_easting_RANGE.min()) & (tl_northing_TILE_initial == tl_moving_window_max_northing_RANGE.max()):
-			print("min easting and max northing!")
-			tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
-			br_easting_TILE=tl_easting_TILE+(tile_dim_m)
-			tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
-			br_northing_TILE=tl_northing_TILE-(tile_dim_m)
-
-		#<<<<<<>>>>>>>
-
-
-
-
-
-		# first column (not first row)
-		elif ((tl_easting_TILE_initial == tl_moving_window_min_easting_RANGE.min()) & (tl_northing_TILE_initial != tl_moving_window_max_northing_RANGE.max())):
-			print("min easting!")
-			tl_easting_TILE=tl_easting_TILE_initial
-			br_easting_TILE=tl_easting_TILE+tile_dim_m			
-			tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
-			br_northing_TILE=tl_northing_TILE-tile_dim_m	
-		# first row (not first column)
-		elif ((tl_northing_TILE_initial == tl_moving_window_max_northing_RANGE.max()) & (tl_easting_TILE_initial != tl_moving_window_min_easting_RANGE.min())):
-			print("max northing!")
-			tl_northing_TILE=tl_northing_TILE_initial
-			br_northing_TILE=tl_northing_TILE-tile_dim_m		
-			tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
-			br_easting_TILE=tl_easting_TILE+tile_dim_m
-		# all other cells
-		elif ((tl_northing_TILE_initial != tl_moving_window_max_northing_RANGE.max()) & (tl_easting_TILE_initial != tl_moving_window_min_easting_RANGE.min())):
-			print("NOT max northing OR min easting!")
-			tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
-			br_easting_TILE=tl_easting_TILE+tile_dim_m
-			tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
-			br_northing_TILE=tl_northing_TILE-tile_dim_m	
-
-		#<<<<<<<<<<
-
-		#<<< this was working...
-		#br_easting_TILE=tl_easting_TILE+tile_dim_m/2
-		#br_northing_TILE=tl_northing_TILE-tile_dim_m/2
-		
+		print ("  ")
 		print("Tile %i" %count)
 
-		dem_tile=dem_crop[np.int(np.floor(tl_easting_TILE)):np.int(np.ceil(br_easting_TILE)), 
-					np.int(np.floor(br_northing_TILE)):np.int(np.ceil(tl_northing_TILE))]
-	
-		# for plotting
-		tiles_x.append((tl_easting_TILE, br_easting_TILE,br_easting_TILE,tl_easting_TILE, tl_easting_TILE))
-		tiles_y.append((br_northing_TILE,br_northing_TILE,tl_northing_TILE,tl_northing_TILE, br_northing_TILE))
-	
+		print("I go here each time...")
+		
+		
+		print("left easting initial: %f" %tl_easting_TILE_initial)
+		print("top northing initial: %f" %tl_northing_TILE_initial)
+		
+
+
+		tl_easting_TILE=np.nan
+		br_easting_TILE=np.nan
+		tl_northing_TILE=np.nan
+		br_northing_TILE=np.nan
+
+		def assign_new_tile_dims(dem_crop, tl_easting_TILE, br_easting_TILE, tl_northing_TILE, br_northing_TILE, tiles_x, tiles_y):
+			
+			dem_tile=dem_crop[np.int(np.floor(tl_easting_TILE)):np.int(np.ceil(br_easting_TILE)), 
+						np.int(np.floor(br_northing_TILE)):np.int(np.ceil(tl_northing_TILE))]
+		
+			# for plotting
+			tiles_x.append((tl_easting_TILE, br_easting_TILE,br_easting_TILE,tl_easting_TILE, tl_easting_TILE))
+			tiles_y.append((br_northing_TILE,br_northing_TILE,tl_northing_TILE,tl_northing_TILE, br_northing_TILE))
+			
+			return (dem_tile, tiles_x, tiles_y)
+
+
+
+		tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
+		br_easting_TILE=tl_easting_TILE+(tile_dim_m)
+		tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
+		br_northing_TILE=tl_northing_TILE-(tile_dim_m)
+
+		print("left easting: %f" %tl_easting_TILE)
+		print("right easting: %f" %br_easting_TILE)
+
+		print("top northing: %f" %tl_northing_TILE)
+		print("bottom northing: %f" %br_northing_TILE)
+		dem_tile, tiles_x, tiles_y = assign_new_tile_dims(dem_crop, tl_easting_TILE, br_easting_TILE, tl_northing_TILE, br_northing_TILE, tiles_x, tiles_y)
+
+
 		# Crop DEM to tile
 		#convert eastings and northings to pixel....
 		#tl_easting_TILE_px=
@@ -292,12 +289,12 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
 		#tl_northing_TILE_px=
 
 		# Write raster
-	#	newRasterfn = "%s/tile_%i.tif"%(out_path, count)
-	#	array2raster(newRasterfn=newRasterfn,
-	#				z_array=dem_tile,
-	#				inDs=inDs,
-	#				originX=tl_easting_TILE, 
-	#				originY=tl_northing_TILE) 
+		#	newRasterfn = "%s/tile_%i.tif"%(out_path, count)
+		#	array2raster(newRasterfn=newRasterfn,
+		#				z_array=dem_tile,
+		#				inDs=inDs,
+		#				originX=tl_easting_TILE, 
+		#				originY=tl_northing_TILE) 
 
 		
 
@@ -306,46 +303,62 @@ print("COMPLETE")
 
 
 # plot tiles over main extent
+def plot_it():
+	fig, ax = plt.subplots()
+	ax.plot((easting_min,easting_max,easting_max,easting_min, easting_min),
+				(northing_min,northing_min,northing_max,northing_max, northing_min), color='red')
 
-fig, ax = plt.subplots()
-ax.plot((easting_min,easting_max,easting_max,easting_min, easting_min),
-			(northing_min,northing_min,northing_max,northing_max, northing_min), color='red')
+	plt.plot((sub_easting_min,sub_easting_max,sub_easting_max,sub_easting_min,sub_easting_min),
+				(sub_northing_min,sub_northing_min,sub_northing_max,sub_northing_max,sub_northing_min), color='blue')
 
-plt.plot((sub_easting_min,sub_easting_max,sub_easting_max,sub_easting_min,sub_easting_min),
-			(sub_northing_min,sub_northing_min,sub_northing_max,sub_northing_max,sub_northing_min), color='blue')
+	ax.set_xlim(easting_min-500, easting_max+500)
+	ax.set_ylim(northing_min-500, northing_max+500)
 
-ax.set_xlim(easting_min-500, easting_max+500)
-ax.set_ylim(northing_min-500, northing_max+500)
+	ax.plot(tiles_x[0], tiles_y[0])
+	ax.plot(tiles_x[1], tiles_y[1])
+	ax.plot(tiles_x[2], tiles_y[2])
+	ax.plot(tiles_x[3], tiles_y[3])
+	ax.plot(tiles_x[4], tiles_y[4])
+	ax.plot(tiles_x[5], tiles_y[5])
+	ax.plot(tiles_x[6], tiles_y[6])
+	ax.plot(tiles_x[7], tiles_y[7])
+	ax.plot(tiles_x[8], tiles_y[8])
+	ax.plot(tiles_x[9], tiles_y[9])
+	ax.plot(tiles_x[10], tiles_y[10])
 
-ax.plot(tiles_x[0], tiles_y[0])
-#ax.plot(tiles_x[1], tiles_y[1])
-#ax.plot(tiles_x[2], tiles_y[2])
-#ax.plot(tiles_x[3], tiles_y[3])
-#ax.plot(tiles_x[4], tiles_y[4])
-#ax.plot(tiles_x[5], tiles_y[5])
-#ax.plot(tiles_x[6], tiles_y[6])
-#ax.plot(tiles_x[7], tiles_y[7])
-#ax.plot(tiles_x[8], tiles_y[8])
-#ax.plot(tiles_x[9], tiles_y[9])
-#ax.plot(tiles_x[10], tiles_y[10])
-#ax.plot(tiles_x[11], tiles_y[11])
-#ax.plot(tiles_x[12], tiles_y[12])
-#ax.plot(tiles_x[13], tiles_y[13])
-#ax.plot(tiles_x[14], tiles_y[14])
-#ax.plot(tiles_x[15], tiles_y[15])
-#ax.plot(tiles_x[16], tiles_y[16])
-#ax.plot(tiles_x[17], tiles_y[17])
-#ax.plot(tiles_x[18], tiles_y[18])
-#ax.plot(tiles_x[19], tiles_y[19])
-#ax.plot(tiles_x[20], tiles_y[20])
-#ax.plot(tiles_x[21], tiles_y[21])
-#ax.plot(tiles_x[22], tiles_y[22])
-#ax.plot(tiles_x[23], tiles_y[23])
-#ax.plot(tiles_x[24], tiles_y[24])
+	ax.plot(tiles_x[11], tiles_y[11])
+	ax.plot(tiles_x[12], tiles_y[12])
+	ax.plot(tiles_x[13], tiles_y[13])
+	ax.plot(tiles_x[14], tiles_y[14])
 
-#ax.plot(tiles_x[8], tiles_y[8])
-ax.axes.set_aspect('equal', 'datalim')
-ax.set_title("Single tile locations")
+	ax.plot(tiles_x[15], tiles_y[15])
+	ax.plot(tiles_x[16], tiles_y[16])
+	ax.plot(tiles_x[17], tiles_y[17])
+	ax.plot(tiles_x[18], tiles_y[18])
+	ax.plot(tiles_x[19], tiles_y[19])
+	ax.plot(tiles_x[20], tiles_y[20])
+	ax.plot(tiles_x[20], tiles_y[21])
+
+	ax.plot(tiles_x[110], tiles_y[110])
+	ax.plot(tiles_x[111], tiles_y[111])
+	ax.plot(tiles_x[112], tiles_y[112])
+	ax.plot(tiles_x[113], tiles_y[113])
+	ax.plot(tiles_x[114], tiles_y[114])
+	ax.plot(tiles_x[115], tiles_y[115])
+	ax.plot(tiles_x[116], tiles_y[116])
+	ax.plot(tiles_x[117], tiles_y[117])
+	ax.plot(tiles_x[118], tiles_y[118])
+	ax.plot(tiles_x[119], tiles_y[119])
+	ax.plot(tiles_x[120], tiles_y[120])
+	ax.plot(tiles_x[121], tiles_y[121])
+
+	ax.axes.set_aspect('equal', 'datalim')
+	ax.set_title("Single tile locations")
+
+
+
+
+
 
 * fix overlapping
 	>> 3rd row onwrds isn;t overlapping...
