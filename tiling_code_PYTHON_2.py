@@ -236,10 +236,17 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
 		# first cell
 		if (tl_easting_TILE_initial == tl_moving_window_min_easting_RANGE.min()) & (tl_northing_TILE_initial == tl_moving_window_max_northing_RANGE.max()):
 			print("min easting and max northing!")
-			tl_easting_TILE=tl_easting_TILE_initial
-			br_easting_TILE=tl_easting_TILE+tile_dim_m
-			tl_northing_TILE=tl_northing_TILE_initial
-			br_northing_TILE=tl_northing_TILE-tile_dim_m
+			tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
+			br_easting_TILE=tl_easting_TILE+(tile_dim_m)
+			tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
+			br_northing_TILE=tl_northing_TILE-(tile_dim_m)
+
+		#<<<<<<>>>>>>>
+
+
+
+
+
 		# first column (not first row)
 		elif ((tl_easting_TILE_initial == tl_moving_window_min_easting_RANGE.min()) & (tl_northing_TILE_initial != tl_moving_window_max_northing_RANGE.max())):
 			print("min easting!")
@@ -311,7 +318,7 @@ ax.set_xlim(easting_min-500, easting_max+500)
 ax.set_ylim(northing_min-500, northing_max+500)
 
 ax.plot(tiles_x[0], tiles_y[0])
-ax.plot(tiles_x[1], tiles_y[1])
+#ax.plot(tiles_x[1], tiles_y[1])
 #ax.plot(tiles_x[2], tiles_y[2])
 #ax.plot(tiles_x[3], tiles_y[3])
 #ax.plot(tiles_x[4], tiles_y[4])
