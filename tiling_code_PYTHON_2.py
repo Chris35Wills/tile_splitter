@@ -109,7 +109,7 @@ assert easting_min < easting_max
 
 ### in metres
 tile_dim_m=200
-tile_overlap=tile_dim_m/2
+tile_overlap=tile_dim_m/2 # 50% overlap - need to see how this affects the variables tl_moving_window_*_RANGE
 
 ### convert to pixels
 tile_dim_px=tile_dim_m/pixel_dim
@@ -303,6 +303,7 @@ plot_it()
 
 """
 * extend to bottom row and furthest column (adjust the tl_moving_window_min_easting_RANGE and tl_moving_window_max_northing_RANGE variables to go a cell further)
+* check how changing the overlap works - the step should also change (affects the tl_moving_window_min_easting_RANGE and tl_moving_window_max_northing_RANGE variables)
 * check tiles overlap (open in QGIS or something)
 * send to Andy
 """
