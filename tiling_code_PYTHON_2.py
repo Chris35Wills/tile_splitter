@@ -109,6 +109,7 @@ assert easting_min < easting_max
 
 ### in metres
 tile_dim_m=200
+tile_overlap=tile_dim_m/2
 
 ### convert to pixels
 tile_dim_px=tile_dim_m/pixel_dim
@@ -139,10 +140,10 @@ easting_max  = easting_min + (post*ncols_crop)         # br_y
 
 
 ## Sub image extent (within border so that moving window doesn;t have any edge effects)
-sub_easting_min =easting_min+(tile_dim_m/2)
-sub_easting_max =easting_max-(tile_dim_m/2)
-sub_northing_min=northing_min+(tile_dim_m/2)
-sub_northing_max=northing_max-(tile_dim_m/2)
+sub_easting_min =easting_min+(tile_overlap)
+sub_easting_max =easting_max-(tile_overlap)
+sub_northing_min=northing_min+(tile_overlap)
+sub_northing_max=northing_max-(tile_overlap)
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< MAIN BIT....
@@ -153,8 +154,8 @@ sub_northing_max=northing_max-(tile_dim_m/2)
 import gdal, ogr, osr, os
 import numpy as np
 
-tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max+(tile_dim_m/2),(tile_dim_m/2))
-tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min-(tile_dim_m/2),(tile_dim_m/2)*-1)
+tl_moving_window_min_easting_RANGE=np.arange(sub_easting_min,sub_easting_max+(tile_overlap),(tile_overlap))
+tl_moving_window_max_northing_RANGE=np.arange(sub_northing_max,sub_northing_min-(tile_overlap),(tile_overlap)*-1)
 
 tiles_x=[]
 tiles_y=[]
@@ -216,9 +217,9 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
             #return (dem_tile, tiles_x, tiles_y, (dem_tile_tl_easting, dem_tile_br_easting, dem_tile_br_northing, dem_tile_tl_northing))
             return (tiles_x, tiles_y, (dem_tile_tl_easting, dem_tile_br_easting, dem_tile_br_northing, dem_tile_tl_northing))
 
-        tl_easting_TILE=tl_easting_TILE_initial-(tile_dim_m/2)
+        tl_easting_TILE=tl_easting_TILE_initial-(tile_overlap)
         br_easting_TILE=tl_easting_TILE+(tile_dim_m)
-        tl_northing_TILE=tl_northing_TILE_initial+(tile_dim_m/2)
+        tl_northing_TILE=tl_northing_TILE_initial+(tile_overlap)
         br_northing_TILE=tl_northing_TILE-(tile_dim_m)
 
         print("left easting: %f" %tl_easting_TILE)
@@ -240,18 +241,6 @@ for tl_easting_TILE_initial in tl_moving_window_min_easting_RANGE:
         dd_tile=georaster.SingleBandRaster(file_name,load_data=tile_xy_dims, latlon=False)
         ofile="%s/tile_%i.tif" %(out_path, count)
         dd_tile.save_geotiff(ofile)
-
-
-
-
-
-        #    newRasterfn = "%s/tile_%i.tif"%(out_path, count)
-        #    array2raster(newRasterfn=newRasterfn,
-        #                z_array=dem_tile,
-        #                inDs=inDs,
-        #                originX=tl_easting_TILE, 
-        #                originY=tl_northing_TILE) 
-
         
 print("COMPLETE")
 
@@ -313,7 +302,7 @@ def plot_it():
 plot_it()
 
 """
-* fix writing of each tile to file
+* extend to bottom row and furthest column (adjust the tl_moving_window_min_easting_RANGE and tl_moving_window_max_northing_RANGE variables to go a cell further)
 * check tiles overlap (open in QGIS or something)
 * send to Andy
 """
